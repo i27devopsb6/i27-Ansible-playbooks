@@ -1,0 +1,31 @@
+# *********************** Tasks that are included in this playbook **************
+# 1. Update the repo
+# 2. Install  java(openjdk-17-jre), so that the slave can be configured
+# 3. Download/Configure Maven for java applications
+# 4. Download/configure application java (openjdk 17)
+# 5. Docker installed
+# 6. Kubectl Configure
+# 7. helm configured 
+# 8. gke authentication configured 
+
+---
+- hosts: jenkins-slave
+  become: true 
+  vars:
+    user_name: rama
+  tasks:
+  - name: Update ubuntu repository
+    apt:
+      update_cache: yes
+      cache_valid_time: 3600 
+  - name: Install java 
+    apt: # ansible.builtin.apt
+      name: openjdk-17-jre
+      update_cache: yes
+  - name: Create /home/{{ user_name }}/jenkins folder
+    file:
+      path: /home/{{ user_name }}/jenkins
+      state: directory
+      owner: "{{ user_name }}"
+      group: "{{ user_name }}"
+      recurse: yes

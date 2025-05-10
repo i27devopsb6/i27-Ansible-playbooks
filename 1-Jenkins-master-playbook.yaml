@@ -1,0 +1,37 @@
+# This playbook is used to configure jenkins master .
+# We will install java, jenkins 
+---
+- hosts: jenkins-master
+  become: true 
+  tasks:
+  - name: Install java 
+    apt: # ansible.builtin.apt
+      name: openjdk-17-jre
+      update_cache: yes
+  - name: Add Jenkins key
+    apt_key:
+      url: https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+      state: present 
+  - name: Add Jenkins repo
+    apt_repository:
+      repo: 'deb https://pkg.jenkins.io/debian-stable binary/'
+      state: present
+  - name: Install jenkins
+    apt:
+      name: jenkins
+      state: present
+  - name: Starts Jenkins 
+    service:
+      name: jenkins
+      state: started
+  - name: Enable Jenkins
+    service:
+      name: jenkins
+      enabled: yes
+  - name: Cat the initialAdminPassword file 
+    shell: cat /var/lib/jenkins/secrets/initialAdminPassword
+    register: inital_admin_password
+  - name: Display the content in inital admin password
+    debug:
+      var: inital_admin_password.stdout_lines
+
